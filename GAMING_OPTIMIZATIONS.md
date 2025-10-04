@@ -22,7 +22,7 @@ This document summarizes the optimizations made to improve gaming performance an
 
 **Problem**: `gameport_run_poll_handler()` had a subtle bug using `timer_container_of(gameport, t, poll_timer)` where `gameport` was being referenced before it was defined, creating a circular reference.
 
-**Solution**: Changed to use the explicit `container_of(t, struct gameport, poll_timer)` to properly retrieve the gameport structure from the timer callback.
+**Solution**: Changed to use the `struct gameport *gameport = from_timer(gameport, t, poll_timer)` to properly retrieve the gameport structure from the timer callback.
 
 **Impact**:
 - Fixed potential undefined behavior
