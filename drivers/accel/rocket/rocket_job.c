@@ -18,7 +18,7 @@
 #include "rocket_job.h"
 #include "rocket_registers.h"
 
-#define JOB_TIMEOUT_MS 500
+#define JOB_TIMEOUT_MS 2000
 
 static struct rocket_job *
 to_rocket_job(struct drm_sched_job *sched_job)

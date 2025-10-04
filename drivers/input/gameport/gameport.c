@@ -85,10 +85,10 @@ static int gameport_measure_speed(struct gameport *gameport)
 
 	tx = ~0;
 
-	for (i = 0; i < 50; i++) {
+	for (i = 0; i < 25; i++) {
 		local_irq_save(flags);
 		t1 = ktime_get_ns();
-		for (t = 0; t < 50; t++)
+		for (t = 0; t < 25; t++)
 			gameport_read(gameport);
 		t2 = ktime_get_ns();
 		t3 = ktime_get_ns();
@@ -100,7 +100,7 @@ static int gameport_measure_speed(struct gameport *gameport)
 	}
 
 	gameport_close(gameport);
-	t = 1000000 * 50;
+	t = 1000000 * 25;
 	if (tx)
 		t /= tx;
 	return t;
@@ -118,10 +118,10 @@ static int old_gameport_measure_speed(struct gameport *gameport)
 
 	tx = 1 << 30;
 
-	for(i = 0; i < 50; i++) {
+	for(i = 0; i < 25; i++) {
 		local_irq_save(flags);
 		GET_TIME(t1);
-		for (t = 0; t < 50; t++) gameport_read(gameport);
+		for (t = 0; t < 25; t++) gameport_read(gameport);
 		GET_TIME(t2);
 		GET_TIME(t3);
 		local_irq_restore(flags);
@@ -142,10 +142,10 @@ static int old_gameport_measure_speed(struct gameport *gameport)
 
 	tx = 1 << 30;
 
-	for(i = 0; i < 50; i++) {
+	for(i = 0; i < 25; i++) {
 		local_irq_save(flags);
 		t1 = rdtsc();
-		for (t = 0; t < 50; t++) gameport_read(gameport);
+		for (t = 0; t < 25; t++) gameport_read(gameport);
 		t2 = rdtsc();
 		local_irq_restore(flags);
 		udelay(i * 10);
@@ -154,7 +154,7 @@ static int old_gameport_measure_speed(struct gameport *gameport)
 
 	gameport_close(gameport);
 	return (this_cpu_read(cpu_info.loops_per_jiffy) *
-		(unsigned long)HZ / (1000 / 50)) / (tx < 1 ? 1 : tx);
+		(unsigned long)HZ / (1000 / 25)) / (tx < 1 ? 1 : tx);
 
 #else
 
@@ -199,8 +199,8 @@ EXPORT_SYMBOL(gameport_stop_polling);
 
 static void gameport_run_poll_handler(struct timer_list *t)
 {
-	struct gameport *gameport = timer_container_of(gameport, t,
-						       poll_timer);
+	struct gameport *gameport = container_of(t, struct gameport,
+						  poll_timer);
 
 	gameport->poll_handler(gameport);
 	if (gameport->poll_cnt)
